@@ -14,6 +14,8 @@ export default function Page() {
   const [region, setRegion] = useState({})
   const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
+  const [currentIndex, setCurrentIndex] = useState(null)
+  // const [selectedMarker, setSelectedMarker] = useState();
   const GOOGLE_MAPS_APIKEY = 'AIzaSyA9K0haHvBiS3WlAhd_SQ5pyNlzGvMP8iI'; 
   const router = useRouter();
   const mapRef = useRef()
@@ -60,17 +62,23 @@ export default function Page() {
     text = JSON.stringify(location);
   }  
   const markers = RideRequest;
-  const onFocusMap = () => {
+  const onFocusMap = (marker?, number?) => { 
+    const current = parseInt(marker?.id)|| currentIndex===null ? 0  : currentIndex + number;
+     
+    setCurrentIndex(current)
     const newRegion =
     {
-      latitude: 14.3754474,
-      longitude: 121.0117115,
+      latitude: marker?.pickupLocation?.latitude || markers[current].pickupLocation.latitude,
+      longitude: marker?.pickupLocation?.longitude ||  markers[current].pickupLocation.longitude,
       latitudeDelta: 0.00922,
       longitudeDelta: 0.00421
       }
     mapRef.current?.animateCamera({center:newRegion, zoom: 10 }, {duration: 1000})
-    setDestination({latitude: 14.3754474,
-      longitude: 121.0117115,})
+    setDestination(
+      {
+        latitude: marker?.pickupLocation?.latitude  || markers[current].pickupLocation.latitude,
+         longitude: marker?.pickupLocation?.longitude  || markers[current].pickupLocation.longitude,
+      })
   }
 
   const onFocusMyLocationMap = () => {
@@ -84,25 +92,7 @@ export default function Page() {
     mapRef.current?.animateCamera({center:newRegion, zoom: 10 }, {duration: 1000})
     setDestination({latitude: 14.3754474,
       longitude: 121.0117115,})
-  }
-
-  // const getDistance = ()=> {
-  //   navigator.geolocation.getCurrentPosition(
-  //     (position) => {
-  //         console.log(
-  //             'You are ',
-  //             geolib.getDistance(position.coords, {
-  //                 latitude: 51.525,
-  //                 longitude: 7.4575,
-  //             }),
-  //             'meters away from 51.525, 7.4575'
-  //         );
-  //     },
-  //     () => {
-  //         alert('Position could not be determined.');
-  //     }
-  // );
-  // }
+  } 
 
   return(
     <View style={styles.container}>
@@ -144,6 +134,7 @@ export default function Page() {
       {/* Rides to pickup */}
         { markers.map((marker, index) => (
         <Marker
+        onPress={()=>onFocusMap(marker, index)}
           key={marker.id}
           coordinate={
             {
@@ -192,18 +183,26 @@ export default function Page() {
         </View>
         <View style={{position: "absolute", bottom: 20, right: 20}}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 4}}>
-              <TouchableOpacity onPress={onFocusMyLocationMap} style={{opacity: 0.4}}>
-                <Image source={require("../assets/prev.png")}  style={{ width: 75, height: 75 }}/>
+              <TouchableOpacity onPress={()=>onFocusMap(null, -1)}  
+               disabled={currentIndex === 0}>
+                {
+                  currentIndex !== 0 && currentIndex !== null &&  <Image source={require("../assets/prev.png")}  style={{ width: 75, height: 75 }}/>
+                }
+               
               </TouchableOpacity> 
-              <TouchableOpacity onPress={onFocusMap}>
-                <Image source={require("../assets/next.png")}  style={{ width: 75, height: 75 }}/>
+              <TouchableOpacity onPress={()=>onFocusMap(null, +1)}
+              disabled={currentIndex === markers.length-1}>
+                 {
+                  currentIndex !== markers.length-1 &&  <Image source={require("../assets/next.png")}  style={{ width: 75, height: 75 }}/>
+                }
+                
               </TouchableOpacity> 
             
             </View>
         </View>
         <View style={{position: "absolute", bottom: 20, left: 20}}>
           
-          <TouchableOpacity onPress={onFocusMyLocationMap}>
+          <TouchableOpacity onPress={()=>onFocusMyLocationMap()}>
             <Image source={require("../assets/current-location.png")}  style={{ width: 75, height: 75 }}/>
           </TouchableOpacity> 
         </View>

@@ -1,5 +1,5 @@
 export const RideRequest = [{
-    id: "1",
+    id: "0",
     userId: "Rider1",
     driverId: null,
     pickupLocation: { //SM MOLINO
@@ -16,7 +16,7 @@ export const RideRequest = [{
     note: "please pick me"
 },
 {
-    id: "2",
+    id: "1",
     userId: "Rider2",
     driverId: null,
     pickupLocation: { //SM BACOOR
@@ -33,7 +33,7 @@ export const RideRequest = [{
     note: "Im late"
 }
 ,{
-    id: "3",
+    id: "2",
     userId: "Rider3",
     driverId: null,
     pickupLocation: { //Saint Dominic Street, Bacoor, 4102 Calabarzon Cavite, Philippines
