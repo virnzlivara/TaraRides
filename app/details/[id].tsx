@@ -64,6 +64,11 @@ import { DetailItem } from './item';
         
       ); 
   } 
+  // if (formattedData.length === 0){
+  
+  //   return <View><Text>No Data to Display</Text></View>
+  // }
+  
   return (
     <SafeAreaView >  
         <View style={{margin: 10, flexDirection: "row", gap: 20  }}>
@@ -75,8 +80,11 @@ import { DetailItem } from './item';
             <Text style={{fontSize: 29}}>Customer Details</Text>
           </View>
         </View>
-         
-      <DetailItem user={formattedData} />
+        {
+          formattedData.length ===0 ?  <Text>No data</Text>  : <DetailItem user={formattedData} /> 
+        }
+        
+    
       
     </SafeAreaView>
   )

@@ -191,7 +191,7 @@ export default function Page() {
                
               </TouchableOpacity> 
               <TouchableOpacity onPress={()=>onFocusMap(null, +1)}
-              disabled={currentIndex === markers.length-1}>
+              disabled={currentIndex === markers.length}>
                  {
                   currentIndex !== markers.length-1 &&  <Image source={require("../assets/next.png")}  style={{ width: 75, height: 75 }}/>
                 }

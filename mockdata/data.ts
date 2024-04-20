@@ -45,11 +45,20 @@ export const RideRequest = [{
         longitude: 121.0106633 
     },
     status: 'pending', //pending' | 'accepted' | 'declined' | 'started' |'picked-up' | 'dropped-off', // Status of the ride request
-    pickupTime: Date.now, // Time when the ride is scheduled for pickup
-    timestamp: Date.now, // Timestamp of when the ride request was made
+    pickupTime: Date.now(), // Time when the ride is scheduled for pickup
+    timestamp: Date.now(), // Timestamp of when the ride request was made
     note: "I will give you a tip!"
 }
 ]
+
+// SM MANILA
+// SM MEGAMALL
+// SM MOA
+
+// KFC PAGASA
+// MCDO RFC
+// WALTERMART
+// JOLIBEE MOLINO
 
 // [
 //     {

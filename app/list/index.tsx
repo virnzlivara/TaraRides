@@ -75,9 +75,9 @@ import { DetailItem } from './item';
   }
    
    
-  // if (!formattedData){
-  //   return <Text>Loading...</Text>
-  // }
+  if (!formattedData){
+    return <View><Text>No Data to Display</Text></View>
+  }
   return (
     <SafeAreaView > 
       <View style={{padding: 10}}>
@@ -91,17 +91,20 @@ import { DetailItem } from './item';
         </View>
         </View>
         <ScrollView style={{marginBottom: 100, marginTop: 20}}>
-           <View style={{margin: 10, flexDirection: "row", justifyContent: "flex-end"} }>
+           <View style={{margin: 10, flexDirection: "row", justifyContent: "flex-end", gap: 5} }>
               <TouchableOpacity style={{padding: 10, backgroundColor: "grey", borderRadius: 20, width: 150}} onPress={sortByDistance}>
                 <Text style={{textAlign: "center", color: "white", fontWeight: "bold"}}>Sort by nearest</Text>
               </TouchableOpacity>
+              <TouchableOpacity style={{padding: 10, backgroundColor: "grey", borderRadius: 20, width: 150}} onPress={sortByDistance}>
+                <Text style={{textAlign: "center", color: "white", fontWeight: "bold"}}>Sort by pickup time</Text>
+              </TouchableOpacity>
           </View>
           { 
-            formattedData.map((d, index)=> 
+            formattedData.length !== 0 ? formattedData.map((d, index)=> 
                <View key = {`${index}-details-${d.distance}`}>
                 <DetailItem user={d} />
               </View>
-            )
+            ) : <Text> No Item to display</Text>
           }
         </ScrollView>
       </View>

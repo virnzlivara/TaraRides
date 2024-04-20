@@ -30,6 +30,7 @@ export const DetailItem = ({user}) => {
         return address; 
         
     }
+    
   return (
     <View  style={{backgroundColor: "pink", borderRadius: 20, padding: 20, margin: 10}}>
         <View style={{flexDirection: "row"}}>
