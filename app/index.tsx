@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { Text, View, StyleSheet, Pressable, Image } from 'react-native';
-import MapView, { Marker } from 'react-native-maps'; 
+import { Text, View, StyleSheet, TouchableOpacity, Image, SafeAreaView, SafeAreaViewBase } from 'react-native';
+import MapView, { Marker, Callout } from 'react-native-maps'; 
 import * as Location from 'expo-location';
-import {useRouter} from 'expo-router'
+import {Link, useRouter} from 'expo-router'
 import { RideRequest } from '../mockdata/data';
 
 import MapViewDirections from 'react-native-maps-directions';
@@ -14,11 +14,7 @@ export default function Page() {
   const [region, setRegion] = useState({})
   const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
-  const GOOGLE_MAPS_APIKEY = 'AIzaSyA9K0haHvBiS3WlAhd_SQ5pyNlzGvMP8iI'
-// const origin = {latitude: 37.3318456, longitude: -122.0296002};
-// const destination = {latitude: 37.771707, longitude: -122.4053769};
-
-
+  const GOOGLE_MAPS_APIKEY = 'AIzaSyA9K0haHvBiS3WlAhd_SQ5pyNlzGvMP8iI'; 
   const router = useRouter();
   const mapRef = useRef()
   useEffect(() => {
@@ -90,6 +86,24 @@ export default function Page() {
       longitude: 121.0117115,})
   }
 
+  // const getDistance = ()=> {
+  //   navigator.geolocation.getCurrentPosition(
+  //     (position) => {
+  //         console.log(
+  //             'You are ',
+  //             geolib.getDistance(position.coords, {
+  //                 latitude: 51.525,
+  //                 longitude: 7.4575,
+  //             }),
+  //             'meters away from 51.525, 7.4575'
+  //         );
+  //     },
+  //     () => {
+  //         alert('Position could not be determined.');
+  //     }
+  // );
+  // }
+
   return(
     <View style={styles.container}>
       <MapView style={styles.map} 
@@ -130,53 +144,70 @@ export default function Page() {
       {/* Rides to pickup */}
         { markers.map((marker, index) => (
         <Marker
-          key={index}
+          key={marker.id}
           coordinate={
             {
               latitude: marker.pickupLocation.latitude,
               longitude: marker.pickupLocation.longitude
             }
-            // marker?.latlng
           }
-          title={marker.id}
-          description={marker.id}
-        >
-          {/* <Text style={{backgroundColor:"pink"}}>Hello</Text> */}
+          // title={marker.id}
+          // description={marker.id}
+        > 
           <Image source={require("../assets/customer.png")}  style={{ width: 50, height: 50 , opacity: 0.3}}/>
-
+            <Callout style={{width: 300}}>
+              <View style={{flexDirection: "row", justifyContent: "start", padding: 10}}>
+                <Text style={{fontWeight: 'bold', color: '#000'}}>
+                  {marker.userId} : 
+                </Text>
+                <Text style={{fontWeight: 'bold', color: '#000'}}>
+                  {marker.note}
+                </Text>
+              </View>
+              <View style={{flexDirection: "row", justifyContent: "end", padding: 10}}>
+                <Link href={`/details/${marker.id}`}>
+                  <Text style={{fontWeight: 'bold', color: '#000', fontStyle: "italic", color: "blue"}}>
+                    View More
+                  </Text>
+                </Link>
+                 
+              </View>
+            </Callout>
           </Marker>
       ))}
      
       </MapView>
-      <View style={styles.menuButton}>
-          <Pressable onPress={()=>router.push('/details')}>
-            {/* Badge */}
-            <View style={{borderRadius: 50, backgroundColor: "red", width: 30, height: 30, position: "absolute", right: 5, zIndex: 2}}>
-              <Text style={{color: "white", textAlign: "center", padding: 6, fontWeight: "bold"}} >7</Text>
-            </View>
-         
-            <Image source={require("../assets/menu.png")}  style={{ width: 75, height: 75 }}/>
-           
-          </Pressable>
+      
+        <View style={styles.menuButton}>
+            <TouchableOpacity onPress={()=>router.push('/list')}>
+              {/* Badge */}
+              <View style={{borderRadius: 50, backgroundColor: "red", width: 30, height: 30, position: "absolute", right: 5, top: 5, zIndex: 2}}>
+                <Text style={{color: "white", textAlign: "center", padding: 6, fontWeight: "bold"}} >{markers.length}</Text>
+              </View>
           
-      </View>
-      <View style={{position: "absolute", bottom: 50, right: 20}}>
-          <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 4}}>
-            <Pressable onPress={onFocusMyLocationMap} style={{opacity: 0.4}}>
-              <Image source={require("../assets/prev.png")}  style={{ width: 75, height: 75 }}/>
-            </Pressable> 
-            <Pressable onPress={onFocusMap}>
-              <Image source={require("../assets/next.png")}  style={{ width: 75, height: 75 }}/>
-            </Pressable> 
-           
-          </View>
-      </View>
-      <View style={{position: "absolute", bottom: 50, left: 20}}>
-          
-          <Pressable onPress={onFocusMyLocationMap}>
-            <Image source={require("../assets/current-location.png")}  style={{ width: 75, height: 75 }}/>
-          </Pressable> 
+              <Image source={require("../assets/menu.png")}  style={{ width: 75, height: 75 }}/>
+            
+            </TouchableOpacity>
+            
         </View>
+        <View style={{position: "absolute", bottom: 20, right: 20}}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 4}}>
+              <TouchableOpacity onPress={onFocusMyLocationMap} style={{opacity: 0.4}}>
+                <Image source={require("../assets/prev.png")}  style={{ width: 75, height: 75 }}/>
+              </TouchableOpacity> 
+              <TouchableOpacity onPress={onFocusMap}>
+                <Image source={require("../assets/next.png")}  style={{ width: 75, height: 75 }}/>
+              </TouchableOpacity> 
+            
+            </View>
+        </View>
+        <View style={{position: "absolute", bottom: 20, left: 20}}>
+          
+          <TouchableOpacity onPress={onFocusMyLocationMap}>
+            <Image source={require("../assets/current-location.png")}  style={{ width: 75, height: 75 }}/>
+          </TouchableOpacity> 
+        </View>
+       
     </View>
   )
 }
@@ -193,6 +224,7 @@ const styles = StyleSheet.create({
   },
   menuButton: {
     position: 'absolute',
-    right: 10
+    right: 10,
+    top: 50
   }
 });

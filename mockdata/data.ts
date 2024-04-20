@@ -1,22 +1,23 @@
 export const RideRequest = [{
     id: "1",
-    userId: "1",
+    userId: "Rider1",
     driverId: null,
     pickupLocation: { //SM MOLINO
         latitude: 14.384019949999999,
         longitude: 120.97697465101861
     },
     destination: {  //EVIA MALL
-        latitude: 14.3754474 ,
+        latitude: 14.3754474,
         longitude: 121.0117115,
     },
     status: 'pending', //pending' | 'accepted' | 'declined' | 'started' |'picked-up' | 'dropped-off', // Status of the ride request
     pickupTime: Date.now, // Time when the ride is scheduled for pickup
-    timestamp: Date.now, // Timestamp of when the ride request was made
+    timestamp: Date.now, // Timestamp of when the ride request was made,
+    note: "please pick me"
 },
 {
-    id: "1",
-    userId: "1",
+    id: "2",
+    userId: "Rider2",
     driverId: null,
     pickupLocation: { //SM BACOOR
         latitude: 14.3754474 ,
@@ -29,9 +30,11 @@ export const RideRequest = [{
     status: 'pending', //pending' | 'accepted' | 'declined' | 'started' |'picked-up' | 'dropped-off', // Status of the ride request
     pickupTime: Date.now, // Time when the ride is scheduled for pickup
     timestamp: Date.now, // Timestamp of when the ride request was made
-},{
-    id: "1",
-    userId: "1",
+    note: "Im late"
+}
+,{
+    id: "3",
+    userId: "Rider3",
     driverId: null,
     pickupLocation: { //Saint Dominic Street, Bacoor, 4102 Calabarzon Cavite, Philippines
         latitude: 14.40,
@@ -44,7 +47,9 @@ export const RideRequest = [{
     status: 'pending', //pending' | 'accepted' | 'declined' | 'started' |'picked-up' | 'dropped-off', // Status of the ride request
     pickupTime: Date.now, // Time when the ride is scheduled for pickup
     timestamp: Date.now, // Timestamp of when the ride request was made
-}]
+    note: "I will give you a tip!"
+}
+]
 
 // [
 //     {
