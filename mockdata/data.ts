@@ -19,8 +19,8 @@ export const RideRequest = [{
     userId: "1",
     driverId: null,
     pickupLocation: { //SM BACOOR
-        latitude: 14.4578,
-        longitude: 120.9425
+        latitude: 14.3754474 ,
+        longitude: 121.0117115,
     },
     destination: { //St. Charbel Dasmariñas Cavite, Saint Charbel Avenue, Sampaloc IV, Dasmariñas, 4115 Cavite, Philippines
         latitude: 14.303991317749023,
@@ -34,8 +34,8 @@ export const RideRequest = [{
     userId: "1",
     driverId: null,
     pickupLocation: { //Saint Dominic Street, Bacoor, 4102 Calabarzon Cavite, Philippines
-        latitude: 14.3724903,
-        longitude: 120.9778322
+        latitude: 14.40,
+        longitude: 120.974795,
     },
     destination: { //SM South Mall, Alabang-Zapote Road, Southern Manila District, 1750 2nd District Metro Manila, Philippines
         latitude: 14.4330297,
