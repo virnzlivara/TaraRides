@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { View, TouchableOpacity, Text} from 'react-native'
 
 export const DetailItem = ({user}) => {
-    
-    const GOOGLE_MAPS_APIKEY = 'AIzaSyBO3wZ4Qr4CZpaxklsSlHx1GCdmgMi8pa4'; 
+ 
+    const GOOGLE_MAPS_APIKEY = process.env.REACT_APP_GOOGLE_API_KEY_ADDRESS || ''; 
     const [data, setData] = useState(user);
     useEffect( ()=> { 
         const fetchAddress = async (data) => {

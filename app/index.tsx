@@ -14,9 +14,9 @@ export default function Page() {
   const [region, setRegion] = useState({})
   const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
-  const [currentIndex, setCurrentIndex] = useState(null)
-  // const [selectedMarker, setSelectedMarker] = useState();
-  const GOOGLE_MAPS_APIKEY = 'AIzaSyA9K0haHvBiS3WlAhd_SQ5pyNlzGvMP8iI'; 
+  const [currentIndex, setCurrentIndex] = useState(null) 
+  const GOOGLE_MAPS_APIKEY = process.env.REACT_APP_GOOGLE_API_KEY_MAP || ''; 
+ 
   const router = useRouter();
   const mapRef = useRef()
   useEffect(() => {
@@ -94,6 +94,19 @@ export default function Page() {
       longitude: 121.0117115,})
   } 
 
+  const goToPickup = () => {
+    // setRegion({
+    //   latitude: destination?.latitude || location?.coords.latitude,
+    //   longitude: destination?.longitude || location?.coords.longitude,
+    //   latitudeDelta: 0.00922,
+    //   longitudeDelta: 0.00421
+    //   }) 
+  }
+
+  const goToDestination = () => {
+    
+  }
+
   return(
     <View style={styles.container}>
       <MapView style={styles.map} 
@@ -126,7 +139,7 @@ export default function Page() {
             title={currentLocation.title}
             description={currentLocation.description}
           >
-              <Text>im here</Text>
+              <Text>You are here!</Text>
               <Image source={require("../assets/rider.png")}  style={{ width: 50, height: 50 }}/>
            
           </Marker>}
@@ -182,6 +195,14 @@ export default function Page() {
             
         </View>
         <View style={{position: "absolute", bottom: 20, right: 20}}>
+            <View style={{gap:5, marginVertical: 20, flexDirection: 'row', justifyContent: "ju"}}>
+              <TouchableOpacity onPress={goToPickup} style={{ padding: 10, borderRadius: 100, backgroundColor: "green"}}> 
+                <Text style={{color: "white", fontWeight: 'bold'}}>P</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={goToDestination}style={{padding: 10, borderRadius: 100, backgroundColor: "blue"}}> 
+                <Text style={{color: "white", fontWeight: 'bold'}}>D</Text>
+              </TouchableOpacity>
+            </View>
             <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 4}}>
               <TouchableOpacity onPress={()=>onFocusMap(null, -1)}  
                disabled={currentIndex === 0}>

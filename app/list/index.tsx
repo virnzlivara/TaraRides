@@ -95,9 +95,9 @@ import { DetailItem } from './item';
               <TouchableOpacity style={{padding: 10, backgroundColor: "grey", borderRadius: 20, width: 150}} onPress={sortByDistance}>
                 <Text style={{textAlign: "center", color: "white", fontWeight: "bold"}}>Sort by nearest</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{padding: 10, backgroundColor: "grey", borderRadius: 20, width: 150}} onPress={sortByDistance}>
+              {/* <TouchableOpacity style={{padding: 10, backgroundColor: "grey", borderRadius: 20, width: 150}} onPress={sortByDistance}>
                 <Text style={{textAlign: "center", color: "white", fontWeight: "bold"}}>Sort by pickup time</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
           </View>
           { 
             formattedData.length !== 0 ? formattedData.map((d, index)=> 
