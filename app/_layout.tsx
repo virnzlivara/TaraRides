@@ -1,23 +1,23 @@
- 
-// import { Stack } from 'expo-router/stack';
-import { Fragment, useEffect  } from 'react'; 
-import { Stack } from 'expo-router';
-export default function RootLayout() { 
- 
-  useEffect(()=> {
-    setInterval(()=>{
-      console.log("ADD HERE")
-    }, 10000)
-  })
+import React, { useEffect } from 'react';
+import { Provider } from 'react-redux';
+import { store } from '../src/store';
+import { Stack} from 'expo-router';
+import { useAppDispatch } from '../src/hooks/useReduxHooks';
+
+// Import your page/screen components 
+
+export default function RootLayout() {
+   
   return (
-    <Fragment> 
+    <Provider store={store}>
       <Stack
-        screenOptions={{ 
+        screenOptions={{
           headerShown: false,
         }}
       >
-      
+        {/* Define your screens here */}
+        
       </Stack>
-    </Fragment>
+    </Provider>
   );
 }

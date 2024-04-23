@@ -1,90 +1,51 @@
-import { Link, useLocalSearchParams, useRouter } from 'expo-router'
+import {  useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { View,Text, TouchableOpacity, Image, ScrollView, SafeAreaView } from 'react-native'
-import { RideRequest } from '../../mockdata/data';
-import { getDistance } from 'geolib';
-import * as Location from 'expo-location';  
+ 
+import { getDistance } from 'geolib';  
 import { DetailItem } from './item';
+import { RootState } from '../../src/store';
+import { useSelector } from 'react-redux';
+import { Header } from '../../src/components/header';
  const Details = () => {
-  
+  const riders = useSelector((state: RootState)=>state.ride)
+  const driverInfo = useSelector((state: RootState)=>state.user)
   const router = useRouter();
   const params = useLocalSearchParams();
-  
-  const [currentLocation, setCurrentLocation] = useState<any>(null);
-  const [data, setData] = useState([]);
-  const [formattedData, setFormattedData] = useState([])
-  useEffect(() => {
-    (async () => {
-      
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        // setErrorMsg('Permission to access location was denied');
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({accuracy: 6});
-      
-      setCurrentLocation({
-        latitude:location?.coords.latitude,
-        longitude: location?.coords.longitude
-        
-      })
-     
-      
-    })();
-  }, []);
-  
-  useEffect(()=> {
-    const rider = RideRequest.find((rider)=>rider.id==params.id) 
-    setData(rider)
-  }, [currentLocation])
-
-  useEffect(()=> { 
-     
-    
-    if (data && currentLocation) { 
-       
-      const distance =  getDistance2( {latitude: data.pickupLocation.latitude, longitude: data.pickupLocation.longitude }) 
-       
-        const newData = {...data, distance: distance}
-        
-        setFormattedData(newData)
-        
-    }
-     
-     
    
-  },[data, currentLocation])
+  const [data, setData] = useState(riders.rideList);
+  const [formattedData, setFormattedData] = useState([]) 
+  
+ 
+
+  useEffect(()=> {   
+    if (driverInfo.currentLocation) {   
+      const rider = data.find((rider)=>rider.id==params.id) 
+      const distance =  getDistance2( {latitude: rider.pickupLocation.latitude, longitude: rider.pickupLocation.longitude }) 
+        const newData = {...rider, distance: distance} 
+        setFormattedData(newData) 
+    } 
+  },[])
  
   
   const getDistance2 = (destination: { latitude: any; longitude: any; })=> {   
     return getDistance(
-        { latitude: currentLocation.latitude, longitude: currentLocation.longitude },
+        { latitude: driverInfo.currentLocation.latitude, longitude: driverInfo.currentLocation.longitude },
         { latitude: destination.latitude, longitude: destination.longitude } 
         
       ); 
   } 
-  // if (formattedData.length === 0){
+  if (formattedData.length === 0){
   
-  //   return <View><Text>No Data to Display</Text></View>
-  // }
+    return <View><Text>No Data to Display</Text></View>
+  }
   
   return (
     <SafeAreaView >  
-        <View style={{margin: 10, flexDirection: "row", gap: 20  }}>
-          <TouchableOpacity onPress={()=>router.back()} >
-            <Image source={require("../../assets/back.png")}  style={{ width: 75, height: 75 }}/>
-              
-          </TouchableOpacity>
-          <View style={{justifyContent:"center"}}>
-            <Text style={{fontSize: 29}}>Customer Details</Text>
-          </View>
-        </View>
+        <Header/>
         {
           formattedData.length ===0 ?  <Text>No data</Text>  : <DetailItem user={formattedData} /> 
-        }
-        
-    
+        } 
       
     </SafeAreaView>
   )

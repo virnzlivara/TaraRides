@@ -6,9 +6,13 @@ import {Link, useRouter} from 'expo-router'
 import { RideRequest } from '../mockdata/data';
 
 import MapViewDirections from 'react-native-maps-directions';
+import { useAppDispatch } from '../src/hooks/useReduxHooks';
+import { setupDriverDetail } from '../src/slicers/user.slicer';
+import { useSelector } from 'react-redux';
+import { addRides } from '../src/slicers/ride.slicer';
 export default function Page() {
 
-  const [location, setLocation] = useState<any>(null);
+  // const [location, setLocation] = useState<any>(null);
   const [currentLocation, setCurrentLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState({});
   const [region, setRegion] = useState({})
@@ -19,6 +23,7 @@ export default function Page() {
  
   const router = useRouter();
   const mapRef = useRef()
+  const dispatch = useAppDispatch()
   useEffect(() => {
     (async () => {
       
@@ -29,13 +34,7 @@ export default function Page() {
       }
 
       let location = await Location.getCurrentPositionAsync({accuracy: 6});
-      setLocation(location);
-      setRegion({
-      latitude: location.coords.latitude ,
-      longitude: location.coords.longitude,
-      latitudeDelta: 0.00922,
-      longitudeDelta: 0.00421
-      }) 
+      // setLocation(location); 
       setCurrentLocation({
         latlng: {
           latitude:location?.coords.latitude,
@@ -46,22 +45,37 @@ export default function Page() {
         description: 'desc'
     
       })
-      setOrigin({
-        latitude:location?.coords.latitude,
-        longitude: location?.coords.longitude
-        
-      }) 
+     
+     
       
     })();
   }, []);
-
+ 
+  useEffect(()=>{
+    
+    if (currentLocation)
+    {
+      dispatch(addRides(RideRequest))
+      dispatch(setupDriverDetail({
+        driverId: "1",
+        currentLocation: {
+          latitude: currentLocation?.latlng.latitude,
+          longitude: currentLocation?.latlng.longitude
+        }
+      }))
+    }
+   
+  }, [currentLocation])
+  const driversInfoSelector = useSelector(state=>state.user) 
+  // const markers = useSelector(state=>state.ride)
+  const markers = RideRequest;
   let text: any = 'Waiting..';
   if (errorMsg) {
     text = errorMsg;
   } else if (location) {
     text = JSON.stringify(location);
   }  
-  const markers = RideRequest;
+
   const onFocusMap = (marker?, number?) => { 
     const current = parseInt(marker?.id)|| currentIndex===null ? 0  : currentIndex + number;
      
@@ -84,8 +98,8 @@ export default function Page() {
   const onFocusMyLocationMap = () => {
     const newRegion =
     {
-      latitude:location?.coords.latitude,
-      longitude: location?.coords.longitude,
+      latitude: driversInfoSelector.currentLocation.latitude,
+      longitude: driversInfoSelector.currentLocation.longitude,
       latitudeDelta: 0.00922,
       longitudeDelta: 0.00421
       }
@@ -114,12 +128,18 @@ export default function Page() {
         // showsUserLocation= {true}
         showsCompass={true}
         ref={mapRef}
-        region={region}
-        onRegionChange={setRegion}>
+        region={{
+          latitude: driversInfoSelector?.currentLocation.latitude ,
+          longitude: driversInfoSelector?.currentLocation.longitude,
+          latitudeDelta: 0.00922,
+          longitudeDelta: 0.00421
+        }}
+        onRegionChange={setRegion}
+        >
           {
-            origin && destination &&  
+            driversInfoSelector.currentLocation && destination &&  
             <MapViewDirections
-              origin={origin}
+              origin={driversInfoSelector.currentLocation}
               destination={destination}
               apikey={GOOGLE_MAPS_APIKEY}
               strokeWidth={4}
@@ -129,23 +149,23 @@ export default function Page() {
           }
          
           {/* Current Location */}
-          {currentLocation && 
+          {driversInfoSelector?.currentLocation && 
           <Marker
             key={"current"}
             coordinate={
               
-              currentLocation.latlng
+              driversInfoSelector?.currentLocation
             }
-            title={currentLocation.title}
-            description={currentLocation.description}
+            title={"You are here!"}
+            description={"You are here!"}
           >
-              <Text>You are here!</Text>
+              {/* <Text>You are here!</Text> */}
               <Image source={require("../assets/rider.png")}  style={{ width: 50, height: 50 }}/>
            
           </Marker>}
         
       {/* Rides to pickup */}
-        { markers.map((marker, index) => (
+        { markers?.map((marker, index) => (
         <Marker
         onPress={()=>onFocusMap(marker, index)}
           key={marker.id}
