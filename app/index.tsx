@@ -9,18 +9,29 @@ import MapViewDirections from 'react-native-maps-directions';
 import { useAppDispatch } from '../src/hooks/useReduxHooks';
 import { setupDriverDetail } from '../src/slicers/user.slicer';
 import { useSelector } from 'react-redux';
-import { addRides } from '../src/slicers/ride.slicer';
+import { addRides, approveSelector, droppedOffSelector, inProgressRideSelector, mockGoToDropOff, pendingRideSelector, pickedUpSelector, startedSelector } from '../src/slicers/ride.slicer';
+import { RootState } from '../src/store';
+import { ICoordinates, IRide } from '../types/IRide';
 export default function Page() {
 
   // const [location, setLocation] = useState<any>(null);
   const [currentLocation, setCurrentLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState({});
-  const [region, setRegion] = useState({})
-  const [origin, setOrigin] = useState();
-  const [destination, setDestination] = useState();
-  const [currentIndex, setCurrentIndex] = useState(null) 
+  const [region, setRegion] = useState({}) 
+  const [destination, setDestination] = useState<ICoordinates>();
+  const [currentIndex, setCurrentIndex] = useState<number>(0) 
   const GOOGLE_MAPS_APIKEY = process.env.REACT_APP_GOOGLE_API_KEY_MAP || ''; 
- 
+  const state = useSelector((state:RootState) => state);
+  const driversInfoSelector = useSelector((state:RootState)=>state.user) 
+  
+  const acceptedRide = approveSelector(state);
+  const startedRide = startedSelector(state)
+  const inProgressRide = inProgressRideSelector(state);
+  const pickupRide = pickedUpSelector(state);
+  const dropOffRide = droppedOffSelector(state)
+  const marker = pendingRideSelector(state)
+  
+  // const marker = useSelector((state:RootState)=>state.ride) 
   const router = useRouter();
   const mapRef = useRef()
   const dispatch = useAppDispatch()
@@ -55,7 +66,7 @@ export default function Page() {
     
     if (currentLocation)
     {
-      dispatch(addRides(RideRequest))
+      dispatch(addRides({rideList: RideRequest}))
       dispatch(setupDriverDetail({
         driverId: "1",
         currentLocation: {
@@ -66,9 +77,8 @@ export default function Page() {
     }
    
   }, [currentLocation])
-  const driversInfoSelector = useSelector(state=>state.user) 
-  // const markers = useSelector(state=>state.ride)
-  const markers = RideRequest;
+  
+  const markers: IRide[] = marker || null
   let text: any = 'Waiting..';
   if (errorMsg) {
     text = errorMsg;
@@ -76,8 +86,8 @@ export default function Page() {
     text = JSON.stringify(location);
   }  
 
-  const onFocusMap = (marker?, number?) => { 
-    const current = parseInt(marker?.id)|| currentIndex===null ? 0  : currentIndex + number;
+  const onFocusMap = (marker: Pick<IRide, "pickupLocation" | "destination" | "id">, number: number = 0) => { 
+    const current = parseInt(marker.id)|| currentIndex===null ? 0  : currentIndex + number;
      
     setCurrentIndex(current)
     const newRegion =
@@ -95,6 +105,50 @@ export default function Page() {
       })
   }
 
+  useEffect(()=> {
+    if (acceptedRide) {
+      console.log("Change destination", acceptedRide)
+      const marker = {
+        pickupLocation: {
+          latitude: acceptedRide.pickupLocation.latitude,
+          longitude: acceptedRide.pickupLocation.longitude
+        } 
+      }
+      
+      onFocusMap(marker);
+    }
+  }, [acceptedRide])
+
+  useEffect(()=> {
+    if (startedRide) {
+      console.log("Change destination", startedRide)
+      const marker = {
+        pickupLocation: {
+          latitude: startedRide.pickupLocation.latitude,
+          longitude: startedRide.pickupLocation.longitude
+        } 
+      }
+      
+      onFocusMap(marker);
+    }
+  }, [startedRide])
+
+   
+  
+
+  useEffect(()=> {
+    if (dropOffRide) {
+      console.log("Change dropOffRide", dropOffRide)
+      const marker = {
+        pickupLocation: {
+          latitude: dropOffRide.destination.latitude,
+          longitude: dropOffRide.destination.longitude
+        } 
+      }
+      onFocusMap(marker);
+    }
+  }, [dropOffRide])
+
   const onFocusMyLocationMap = () => {
     const newRegion =
     {
@@ -108,17 +162,35 @@ export default function Page() {
       longitude: 121.0117115,})
   } 
 
-  const goToPickup = () => {
-    // setRegion({
-    //   latitude: destination?.latitude || location?.coords.latitude,
-    //   longitude: destination?.longitude || location?.coords.longitude,
-    //   latitudeDelta: 0.00922,
-    //   longitudeDelta: 0.00421
-    //   }) 
+  const goToPickup = () => { 
+    if (startedRide) {
+      dispatch(setupDriverDetail({
+        driverId: "1",
+        currentLocation: {
+          latitude: startedRide.pickupLocation.latitude,
+          longitude: startedRide.pickupLocation.longitude
+        }
+      }))
+    }
+    
+     
   }
 
   const goToDestination = () => {
-    
+    if (pickupRide) {
+      dispatch(setupDriverDetail({
+        driverId: "1",
+        currentLocation: {
+          latitude: pickupRide.destination.latitude,
+          longitude: pickupRide.destination.longitude
+        }
+      }))
+      dispatch(mockGoToDropOff({id: pickupRide.userId, pickupLocation: {
+        latitude: pickupRide.destination.latitude,
+        longitude: pickupRide.destination.longitude
+      }}))
+
+    }
   }
 
   return(
@@ -165,7 +237,7 @@ export default function Page() {
           </Marker>}
         
       {/* Rides to pickup */}
-        { markers?.map((marker, index) => (
+        { markers?.map((marker: IRide, index: number) => (
         <Marker
         onPress={()=>onFocusMap(marker, index)}
           key={marker.id}
@@ -178,7 +250,7 @@ export default function Page() {
           // title={marker.id}
           // description={marker.id}
         > 
-          <Image source={require("../assets/customer.png")}  style={{ width: 50, height: 50 , opacity: 0.3}}/>
+          <Image source={require("../assets/customer.png")}  style={{ width: 50, height: 50}}/>
             <Callout style={{width: 300}}>
               <View style={{flexDirection: "row", justifyContent: "start", padding: 10}}>
                 <Text style={{fontWeight: 'bold', color: '#000'}}>
@@ -201,29 +273,32 @@ export default function Page() {
       ))}
      
       </MapView>
+       {
+        !inProgressRide && <View style={styles.menuButton}>
+        <TouchableOpacity onPress={()=>router.push('/list')}>
+          {/* Badge */}
+          <View style={{borderRadius: 50, backgroundColor: "red", width: 30, height: 30, position: "absolute", right: 5, top: 5, zIndex: 2}}>
+            <Text style={{color: "white", textAlign: "center", padding: 6, fontWeight: "bold"}} >{markers.length}</Text>
+          </View>
       
-        <View style={styles.menuButton}>
-            <TouchableOpacity onPress={()=>router.push('/list')}>
-              {/* Badge */}
-              <View style={{borderRadius: 50, backgroundColor: "red", width: 30, height: 30, position: "absolute", right: 5, top: 5, zIndex: 2}}>
-                <Text style={{color: "white", textAlign: "center", padding: 6, fontWeight: "bold"}} >{markers.length}</Text>
-              </View>
-          
-              <Image source={require("../assets/menu.png")}  style={{ width: 75, height: 75 }}/>
-            
-            </TouchableOpacity>
-            
-        </View>
+          <Image source={require("../assets/menu.png")}  style={{ width: 75, height: 75 }}/>
+        
+        </TouchableOpacity>
+        
+    </View>
+       }
+        
         <View style={{position: "absolute", bottom: 20, right: 20}}>
             <View style={{gap:5, marginVertical: 20, flexDirection: 'row', justifyContent: "ju"}}>
-              <TouchableOpacity onPress={goToPickup} style={{ padding: 10, borderRadius: 100, backgroundColor: "green"}}> 
+              { startedRide && <TouchableOpacity onPress={goToPickup} style={{ padding: 10, borderRadius: 100, backgroundColor: "green"}}> 
                 <Text style={{color: "white", fontWeight: 'bold'}}>P</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={goToDestination}style={{padding: 10, borderRadius: 100, backgroundColor: "blue"}}> 
+              </TouchableOpacity> }
+              {pickupRide && <TouchableOpacity onPress={goToDestination}style={{padding: 10, borderRadius: 100, backgroundColor: "blue"}}> 
                 <Text style={{color: "white", fontWeight: 'bold'}}>D</Text>
-              </TouchableOpacity>
+              </TouchableOpacity>}
+              
             </View>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 4}}>
+            { inProgressRide && <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 4}}>
               <TouchableOpacity onPress={()=>onFocusMap(null, -1)}  
                disabled={currentIndex === 0}>
                 {
@@ -234,12 +309,13 @@ export default function Page() {
               <TouchableOpacity onPress={()=>onFocusMap(null, +1)}
               disabled={currentIndex === markers.length}>
                  {
-                  currentIndex !== markers.length-1 &&  <Image source={require("../assets/next.png")}  style={{ width: 75, height: 75 }}/>
+                  currentIndex !== markers.length-1 && markers.length !== 0 &&  <Image source={require("../assets/next.png")}  style={{ width: 75, height: 75 }}/>
                 }
                 
               </TouchableOpacity> 
             
-            </View>
+            </View>}
+            
         </View>
         <View style={{position: "absolute", bottom: 20, left: 20}}>
           
@@ -268,3 +344,5 @@ const styles = StyleSheet.create({
     top: 50
   }
 });
+ 
+

@@ -6,9 +6,9 @@ export const RideRequest = [{
         latitude: 14.384019949999999,
         longitude: 120.97697465101861
     },
-    destination: {  //EVIA MALL
-        latitude: 14.3754474,
-        longitude: 121.0117115,
+    destination: {  
+        latitude: 14.484019945999959,
+        longitude: 120.97697465101861
     },
     status: 'pending', //pending' | 'accepted' | 'declined' | 'started' |'picked-up' | 'dropped-off', // Status of the ride request
     pickupTime: new Date().toDateString(), // Time when the ride is scheduled for pickup

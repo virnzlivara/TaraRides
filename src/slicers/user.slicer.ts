@@ -39,7 +39,9 @@ export const { setupDriverDetail } = UserSlicer.actions
 // Reducer
 export default UserSlicer.reducer
 
-// const selectDriverInfo = (state: RootState) => state;
-// export const driverInfoSelector = createSelector(selectDriverInfo, (state) => state.driverId)
-// export const driverCurrentLocationSelector = createSelector(selectDriverInfo, (state) => state.currentLocation)
-// export const driverInfoSelector = useSelector((state: RootState)=>state.user)
+
+const driverSelector = (state:RootState)=>state.user;
+
+const driverIdSelector = createSelector(driverSelector, (state) => state.driverId)
+
+export {driverIdSelector}

@@ -61,7 +61,7 @@ export const DetailItem = ({user}) => {
             {/* <Text style={{fontWeight: "bold", fontSize: 20}}>Destination:  </Text>  */}
             <Text style={{flexWrap: "wrap", fontWeight: "bold", fontSize: 20}}>{data.destinationAddress}</Text>
         </View>
-        <ActionButtons/>
+        <ActionButtons data = {data}/>
         
         
       </View>

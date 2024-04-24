@@ -1,11 +1,11 @@
  
-import { PayloadAction, createSelector, createSlice } from "@reduxjs/toolkit";
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
-import { IRide } from "../../types/IRide";
+import { IRide } from './../../types/IRide';
+import { RootState } from './../store';
+ 
+import { PayloadAction, createSelector, createSlice } from "@reduxjs/toolkit";  
 
 export interface IRider {
-    rideList: IRide[]
+    rideList: IRide[]  
     
 }
 
@@ -18,29 +18,103 @@ const RideSlicer =  createSlice({
     name: 'Users',
     initialState,
     reducers: {
-        addRides: (_state, action: PayloadAction<IRide>) => { 
-           
+        addRides: (_state, action: PayloadAction<IRider>)=> {   
             return {
-                ..._state, rideList: action.payload
+                ..._state,rideList: action.payload.rideList
               }
         },
-        updateDetails: (_state, action: PayloadAction<Partial<IRide>>) => { 
-            action
+        mockGoToDropOff: (_state, action: PayloadAction<IRider>)=> {   
+            const updated = _state.rideList.map((ride: IRide) => {
+                if (ride.userId == action.payload.id) {
+                    return {
+                        ...ride, 
+                        pickupLocation: action.payload.pickupLocation,
+                        
+                    }
+                }
+                return ride
+            }) 
             return {
-                ..._state, ...action.payload
-              }
+                ..._state, rideList: updated
+            }
+        },
+        updateDetails: (_state, action: PayloadAction<Partial<IRide>>) => {
+             
+            if (action.payload.status === "declined") {
+                
+                const updateDelete = _state.rideList.filter((ride: IRide)=> {
+                    return ride.userId !== action.payload.id
+                }) 
+                return {
+                    ..._state, rideList: updateDelete
+                  }
+            } else {
+                const driverId = action.payload.driverId 
+                const updated = _state.rideList.map((ride: IRide) => {
+                    if (ride.userId == action.payload.id) {
+                        return {
+                            ...ride,
+                            status: action.payload.status,
+                            driverId,
+                            
+                        }
+                    }
+                    return ride
+                }) 
+                return {
+                    ..._state, rideList: updated
+                }
+            }
+            
         }
          
     }
 });
 
 // Actions
-export const { addRides, updateDetails } = RideSlicer.actions
+export const { addRides, updateDetails, mockGoToDropOff } = RideSlicer.actions
 
 // Reducer
-export default RideSlicer.reducer
+export default RideSlicer.reducer;
 
+export const selectRidelist = (state: RootState) => state.ride.rideList
+
+export const selectActiveRide = createSelector(
+    selectRidelist,
+    rideList => rideList.filter(todo => todo)
+  );
+
+ 
+  const rideSelector = (state:RootState)=>state.ride; 
+
+  
+//   const approveSelector1 = createSelector(rideSelector, (state: RootState) => state.ride.rideList.filter((ride : IRide)=>ride.status === "approved"))
 // const selectDriverInfo = (state: RootState) => state;
-// export const driverInfoSelector = createSelector(selectDriverInfo, (state) => state.driverId)
-// export const driverCurrentLocationSelector = createSelector(selectDriverInfo, (state) => state.currentLocation)
-// export const driverInfoSelector = useSelector((state: RootState)=>state.user)
+const approveSelector = createSelector(rideSelector, (state)  => state.rideList.find((ride : IRide)=>
+    ride.status === "accepted"
+))
+const startedSelector = createSelector(rideSelector, (state)  => state.rideList.find((ride : IRide) =>
+    ride.status === "started"
+))
+const pickedUpSelector = createSelector(rideSelector, (state)  => state.rideList.find((ride : IRide)=>
+    ride.status === "picked-up"
+))
+const droppedOffSelector = createSelector(rideSelector, (state)  => state.rideList.find((ride : IRide)=>
+    ride.status === "dropped-off"
+))
+
+const inProgressRideSelector = createSelector(rideSelector, (state)  => state.rideList.find((ride : IRide)=>
+    ride.status === "accepted" || ride.status === "started" || ride.status === "picked-up"
+))
+
+const pendingRideSelector = createSelector(rideSelector, (state)  => state.rideList.filter((ride : IRide)=>
+    ride.status === 'dropped-off' || []
+))
+
+const within1KMSelector = createSelector(rideSelector, (state)  => state.rideList.filter((ride : IRide)=>
+    ride
+))
+
+
+
+ export {approveSelector, startedSelector, pickedUpSelector, droppedOffSelector, inProgressRideSelector, pendingRideSelector, within1KMSelector}

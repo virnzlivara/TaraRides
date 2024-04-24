@@ -84,7 +84,7 @@ export const DetailItem = ({user}) => {
              */}
         
         
-        <ActionButtons/>
+        <ActionButtons data = {data}/>
         </View>
     ) 
 }
