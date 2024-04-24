@@ -64,7 +64,7 @@ export const ActionButtons = ({data}: IProps) => {
             <Text style={{fontSize: 25, textAlign: "center", color: "white", fontWeight: "bold"}}>{getButtonText(data.status)}</Text>
             </TouchableOpacity>
           
-            <TouchableOpacity  disabled = {isDeclineDisable }style={{width: "50%", backgroundColor: isDeclineDisable || inProgressRide ? "gray" : "red", borderRadius: 20, padding: 20}}
+            <TouchableOpacity  disabled = {isDeclineDisable || inProgressRide }style={{width: "50%", backgroundColor: isDeclineDisable || inProgressRide ? "gray" : "red", borderRadius: 20, padding: 20}}
             onPress={()=>onDecline("declined")}>
             <Text style={{fontSize: 25, textAlign: "center", color: "white", fontWeight: "bold"}}>Decline</Text>
             </TouchableOpacity>

@@ -63,8 +63,8 @@ import { IRider, pendingRideSelector, within1KMSelector } from '../../src/slicer
    
     setFormattedData([]); 
     const filtered = newData.filter((data) => { 
-      return data.distance < 5000 })  
-      
+      return data.distance < 1000 })  
+      console.log("FILETED", filtered)
       setFormattedData(filtered); 
   }
    

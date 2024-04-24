@@ -86,8 +86,8 @@ export default function Page() {
     text = JSON.stringify(location);
   }  
 
-  const onFocusMap = (marker: Pick<IRide, "pickupLocation" | "destination" | "id">, number: number = 0) => { 
-    const current = parseInt(marker.id)|| currentIndex===null ? 0  : currentIndex + number;
+  const onFocusMap = (marker?: Pick<IRide, "pickupLocation" | "destination" | "id">, number: number = 0) => { 
+    const current = parseInt(marker?.id)|| currentIndex===null ? 0  : currentIndex + number;
      
     setCurrentIndex(current)
     const newRegion =
@@ -158,8 +158,8 @@ export default function Page() {
       longitudeDelta: 0.00421
       }
     mapRef.current?.animateCamera({center:newRegion, zoom: 10 }, {duration: 1000})
-    setDestination({latitude: 14.3754474,
-      longitude: 121.0117115,})
+    setDestination({latitude: driversInfoSelector.currentLocation.latitude,
+      longitude:driversInfoSelector.currentLocation.longitude})
   } 
 
   const goToPickup = () => { 
@@ -298,7 +298,7 @@ export default function Page() {
               </TouchableOpacity>}
               
             </View>
-            { inProgressRide && <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 4}}>
+            { !inProgressRide && <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 4}}>
               <TouchableOpacity onPress={()=>onFocusMap(null, -1)}  
                disabled={currentIndex === 0}>
                 {

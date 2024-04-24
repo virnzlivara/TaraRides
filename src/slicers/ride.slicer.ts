@@ -87,15 +87,13 @@ export const selectActiveRide = createSelector(
  
   const rideSelector = (state:RootState)=>state.ride; 
 
-  
-//   const approveSelector1 = createSelector(rideSelector, (state: RootState) => state.ride.rideList.filter((ride : IRide)=>ride.status === "approved"))
-// const selectDriverInfo = (state: RootState) => state;
+ 
 const approveSelector = createSelector(rideSelector, (state)  => state.rideList.find((ride : IRide)=>
     ride.status === "accepted"
 ))
 const startedSelector = createSelector(rideSelector, (state)  => state.rideList.find((ride : IRide) =>
     ride.status === "started"
-))
+)) 
 const pickedUpSelector = createSelector(rideSelector, (state)  => state.rideList.find((ride : IRide)=>
     ride.status === "picked-up"
 ))
@@ -104,7 +102,7 @@ const droppedOffSelector = createSelector(rideSelector, (state)  => state.rideLi
 ))
 
 const inProgressRideSelector = createSelector(rideSelector, (state)  => state.rideList.find((ride : IRide)=>
-    ride.status === "accepted" || ride.status === "started" || ride.status === "picked-up"
+    ride.status === "accepted" || ride.status === "started" || ride.status === "picked-up" 
 ))
 
 const pendingRideSelector = createSelector(rideSelector, (state)  => state.rideList.filter((ride : IRide)=>
