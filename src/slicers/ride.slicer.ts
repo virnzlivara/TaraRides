@@ -23,7 +23,7 @@ const RideSlicer =  createSlice({
                 ..._state,rideList: action.payload.rideList
               }
         },
-        mockGoToDropOff: (_state, action: PayloadAction<IRider>)=> {   
+        mockGoToDropOff: (_state, action: PayloadAction<any>)=> {   
             const updated = _state.rideList.map((ride: IRide) => {
                 if (ride.userId == action.payload.id) {
                     return {
@@ -85,7 +85,7 @@ export const selectActiveRide = createSelector(
   );
 
  
-  const rideSelector = (state:RootState)=>state.ride; 
+  const rideSelector = (state:RootState)=>state.ride;  
 
  
 const approveSelector = createSelector(rideSelector, (state)  => state.rideList.find((ride : IRide)=>
@@ -106,13 +106,15 @@ const inProgressRideSelector = createSelector(rideSelector, (state)  => state.ri
 ))
 
 const pendingRideSelector = createSelector(rideSelector, (state)  => state.rideList.filter((ride : IRide)=>
-    ride.status === 'dropped-off' || []
+    (ride.status !== 'dropped-off' && ride.status !== 'declined' && ride.distance < 5000)
 ))
 
-const within1KMSelector = createSelector(rideSelector, (state)  => state.rideList.filter((ride : IRide)=>
-    ride
+const within5KMSelector = createSelector(rideSelector, (state)  => state.rideList.filter((ride : IRide)=>
+    ride.distance < 5000
 ))
+  
 
 
 
- export {approveSelector, startedSelector, pickedUpSelector, droppedOffSelector, inProgressRideSelector, pendingRideSelector, within1KMSelector}
+
+ export {approveSelector, startedSelector, pickedUpSelector, droppedOffSelector, inProgressRideSelector, pendingRideSelector, within5KMSelector}

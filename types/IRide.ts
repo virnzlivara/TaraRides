@@ -7,9 +7,18 @@ export interface IRide {
     destination: ICoordinates
     status: string, // Status of the ride request
     pickupTime: string, // Time when the ride is scheduled for pickup
-    timestamp: string, // Timestamp of when the ride request was made
+    timestamp: string, // Timdistanceestamp of when the ride request was made
     note: string,
     distance: number
+}
+
+export interface IRiderData {
+    pickupLocation: ICoordinates,
+    destinationAddress: string,
+    pickUpAddress: string, 
+    userId: string,
+    distance: number,
+    status: string
 }
 
 export interface ICoordinates {

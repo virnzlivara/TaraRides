@@ -3,12 +3,12 @@ import { TouchableOpacity,View, Text } from 'react-native'
 import { useAppDispatch } from '../hooks/useReduxHooks'
 import { inProgressRideSelector, updateDetails } from '../slicers/ride.slicer'
 import { useRouter } from 'expo-router'
-import { IRide } from '../../types/IRide'
+import { IRide, IRiderData } from '../../types/IRide'
 import { driverIdSelector } from '../slicers/user.slicer'
 import { RootState } from '../store'
-import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux' 
 interface IProps {
-  data: IRide
+  data: IRide | IRiderData
 }
 export const ActionButtons = ({data}: IProps) => {
   const [isAcceptDisable, setIsAcceptDisable]= useState(false)
@@ -18,7 +18,7 @@ export const ActionButtons = ({data}: IProps) => {
   const state = useSelector((state:RootState) => state);
   const driverId = driverIdSelector(state);
   const inProgressRide = inProgressRideSelector(state)
-  const onApprove = (status) => {  
+  const onApprove = (status: string) => {  
     dispatch(updateDetails({id: data.userId, status: status, driverId: driverId }))
     setIsAcceptDisable(true)
     router.back();

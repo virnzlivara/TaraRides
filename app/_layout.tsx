@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../src/store';
-import { Stack} from 'expo-router';
-import { useAppDispatch } from '../src/hooks/useReduxHooks';
+import { Stack} from 'expo-router'; 
 
 // Import your page/screen components 
 
@@ -14,8 +13,7 @@ export default function RootLayout() {
         screenOptions={{
           headerShown: false,
         }}
-      >
-        {/* Define your screens here */}
+      > 
         
       </Stack>
     </Provider>

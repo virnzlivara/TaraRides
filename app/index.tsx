@@ -9,9 +9,10 @@ import MapViewDirections from 'react-native-maps-directions';
 import { useAppDispatch } from '../src/hooks/useReduxHooks';
 import { setupDriverDetail } from '../src/slicers/user.slicer';
 import { useSelector } from 'react-redux';
-import { addRides, approveSelector, droppedOffSelector, inProgressRideSelector, mockGoToDropOff, pendingRideSelector, pickedUpSelector, startedSelector } from '../src/slicers/ride.slicer';
+import { addRides, approveSelector, droppedOffSelector, inProgressRideSelector, mockGoToDropOff, pendingRideSelector, pickedUpSelector, startedSelector, within1KMSelector, within5KMSelector } from '../src/slicers/ride.slicer';
 import { RootState } from '../src/store';
 import { ICoordinates, IRide } from '../types/IRide';
+import { getDistance } from 'geolib';
 export default function Page() {
 
   // const [location, setLocation] = useState<any>(null);
@@ -29,12 +30,13 @@ export default function Page() {
   const inProgressRide = inProgressRideSelector(state);
   const pickupRide = pickedUpSelector(state);
   const dropOffRide = droppedOffSelector(state)
-  const marker = pendingRideSelector(state)
+  const marker = pendingRideSelector(state) 
   
   // const marker = useSelector((state:RootState)=>state.ride) 
   const router = useRouter();
   const mapRef = useRef()
   const dispatch = useAppDispatch()
+  const [formattedData, setFormattedData] = useState<IRide[]>([]);
   useEffect(() => {
     (async () => {
       
@@ -66,7 +68,8 @@ export default function Page() {
     
     if (currentLocation)
     {
-      dispatch(addRides({rideList: RideRequest}))
+      initializeDataWithDistance()
+     
       dispatch(setupDriverDetail({
         driverId: "1",
         currentLocation: {
@@ -77,6 +80,29 @@ export default function Page() {
     }
    
   }, [currentLocation])
+
+  const initializeDataWithDistance = () => { 
+    
+    let newData : IRide[] = []; 
+    if (RideRequest.length >= 0 && driversInfoSelector.currentLocation) { 
+      RideRequest.map((userInfo)=> {
+        const distance =  getDistanceMeter( {latitude: userInfo.pickupLocation.latitude, longitude: userInfo.pickupLocation.longitude }) 
+        newData.push({...userInfo, distance: distance})
+       
+        
+      })   
+      dispatch(addRides({rideList: newData}))
+    }  
+  }
+  
+  const getDistanceMeter = (destination: { latitude: any; longitude: any; })=> {   
+    return getDistance(
+        { latitude: driversInfoSelector.currentLocation.latitude, longitude: driversInfoSelector.currentLocation.longitude },
+        { latitude: destination.latitude, longitude: destination.longitude } 
+        
+      ); 
+  }
+
   
   const markers: IRide[] = marker || null
   let text: any = 'Waiting..';
@@ -87,7 +113,7 @@ export default function Page() {
   }  
 
   const onFocusMap = (marker?: Pick<IRide, "pickupLocation" | "destination" | "id">, number: number = 0) => { 
-    const current = parseInt(marker?.id)|| currentIndex===null ? 0  : currentIndex + number;
+    const current = marker ? parseInt(marker?.id) : currentIndex===null ? 0  : currentIndex + number;
      
     setCurrentIndex(current)
     const newRegion =
@@ -103,16 +129,16 @@ export default function Page() {
         latitude: marker?.pickupLocation?.latitude  || markers[current].pickupLocation.latitude,
          longitude: marker?.pickupLocation?.longitude  || markers[current].pickupLocation.longitude,
       })
-  }
+  } 
 
   useEffect(()=> {
     if (acceptedRide) {
-      console.log("Change destination", acceptedRide)
       const marker = {
         pickupLocation: {
           latitude: acceptedRide.pickupLocation.latitude,
           longitude: acceptedRide.pickupLocation.longitude
         } 
+
       }
       
       onFocusMap(marker);
@@ -121,7 +147,6 @@ export default function Page() {
 
   useEffect(()=> {
     if (startedRide) {
-      console.log("Change destination", startedRide)
       const marker = {
         pickupLocation: {
           latitude: startedRide.pickupLocation.latitude,
@@ -138,7 +163,7 @@ export default function Page() {
 
   useEffect(()=> {
     if (dropOffRide) {
-      console.log("Change dropOffRide", dropOffRide)
+       
       const marker = {
         pickupLocation: {
           latitude: dropOffRide.destination.latitude,
@@ -298,7 +323,7 @@ export default function Page() {
               </TouchableOpacity>}
               
             </View>
-            { !inProgressRide && <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 4}}>
+            {/* { !inProgressRide && <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 4}}>
               <TouchableOpacity onPress={()=>onFocusMap(null, -1)}  
                disabled={currentIndex === 0}>
                 {
@@ -314,7 +339,7 @@ export default function Page() {
                 
               </TouchableOpacity> 
             
-            </View>}
+            </View>} */}
             
         </View>
         <View style={{position: "absolute", bottom: 20, left: 20}}>

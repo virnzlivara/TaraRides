@@ -7,14 +7,16 @@ import { DetailItem } from './item';
 import { RootState } from '../../src/store';
 import { useSelector } from 'react-redux';
 import { Header } from '../../src/components/header';
+import { pendingRideSelector } from '../../src/slicers/ride.slicer';
  const Details = () => {
   const riders = useSelector((state: RootState)=>state.ride)
-  const driverInfo = useSelector((state: RootState)=>state.user)
-  const router = useRouter();
+  const state = useSelector((state:RootState) => state);
+  // const riders = pendingRideSelector(state) 
+  const driverInfo = useSelector((state: RootState)=>state.user); 
   const params = useLocalSearchParams();
    
   const [data, setData] = useState(riders.rideList);
-  const [formattedData, setFormattedData] = useState([]) 
+  const [formattedData, setFormattedData] = useState([]);
   
  
 

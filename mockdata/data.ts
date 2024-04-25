@@ -49,6 +49,40 @@ export const RideRequest = [{
     timestamp: new Date().toDateString(), // Timestamp of when the ride request was made
     note: "I will give you a tip!"
 }
+,{
+    id: "3",
+    userId: "Rider4",
+    driverId: null,
+    pickupLocation: {  
+        latitude: 15.50,
+        longitude: 120.974795,
+    },
+    destination: { //SM South Mall, Alabang-Zapote Road, Southern Manila District, 1750 2nd District Metro Manila, Philippines
+        latitude: 15.4330297,
+        longitude: 121.0106633 
+    },
+    status: 'pending', //pending' | 'accepted' | 'declined' | 'started' |'picked-up' | 'dropped-off', // Status of the ride request
+    pickupTime: new Date().toDateString(), // Time when the ride is scheduled for pickup
+    timestamp: new Date().toDateString(), // Timestamp of when the ride request was made
+    note: "I will give you a tip!"
+}
+,{
+    id: "4",
+    userId: "Rider5",
+    driverId: null,
+    pickupLocation: {  
+        latitude: 13.40,
+        longitude: 120.974795,
+    },
+    destination: { 
+        latitude: 13.4330297,
+        longitude: 121.0106633 
+    },
+    status: 'pending', //pending' | 'accepted' | 'declined' | 'started' |'picked-up' | 'dropped-off', // Status of the ride request
+    pickupTime: new Date().toDateString(), // Time when the ride is scheduled for pickup
+    timestamp: new Date().toDateString(), // Timestamp of when the ride request was made
+    note: "I will give you a tip!"
+}
 ]
 
 // SM MANILA

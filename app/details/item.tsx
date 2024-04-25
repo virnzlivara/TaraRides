@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { TouchableOpacity, View, Text,Image } from 'react-native'
+import {   View, Text,Image } from 'react-native'
 import { ActionButtons } from '../../src/components/action-buttons';
+import {   IRide, IRiderData } from 'types/IRide';
+interface IProps {
+    user: IRide | IRiderData
+}
 
-export const DetailItem = ({user}) => { 
+export const DetailItem = ({user} : IProps) => { 
      const GOOGLE_MAPS_APIKEY = process.env.REACT_APP_GOOGLE_API_KEY_ADDRESS || ''; 
-    const [data, setData] = useState(user);
+    const [data, setData] = useState<IRide | IRiderData>(user);
     useEffect( ()=> { 
-        const fetchAddress = async (data) => { 
+        const fetchAddress = async (data:  IRide | IRiderData) => { 
             const pickupAddress =  await retrieveAddressName(data.pickupLocation.latitude, data.pickupLocation.longitude) || "Address"
             const destinationAddress =  await retrieveAddressName(data.destination.latitude, data.destination.longitude) || "Address"
             return {pickupAddress, destinationAddress }
@@ -20,7 +24,7 @@ export const DetailItem = ({user}) => {
         }
         setData(user)
     }, [user])
-    const retrieveAddressName = async (myLat: string, myLon: string)=> { 
+    const retrieveAddressName = async (myLat: number, myLon: number)=> { 
         const URL = `https://maps.googleapis.com/maps/api/geocode/json?address=${myLat},${myLon}&key=${GOOGLE_MAPS_APIKEY}`
         let address = 'No Address found'
         const res = await fetch(URL);
