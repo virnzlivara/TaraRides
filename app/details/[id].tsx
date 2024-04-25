@@ -37,11 +37,7 @@ import { pendingRideSelector } from '../../src/slicers/ride.slicer';
         
       ); 
   } 
-  if (formattedData.length === 0){
-  
-    return <View><Text>No Data to Display</Text></View>
-  }
-  
+
   return (
     <SafeAreaView >  
         <Header/>

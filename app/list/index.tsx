@@ -87,12 +87,12 @@ import {  pendingRideSelector } from '../../src/slicers/ride.slicer';
               <TouchableOpacity style={{padding: 10, backgroundColor: "grey", borderRadius: 20, width: 150}} onPress={sortByDistance}>
                 <Text style={{textAlign: "center", color: "white", fontWeight: "bold"}}>{`Sort by nearest `}</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={{padding: 10, backgroundColor: "grey", borderRadius: 20, width: 150}} onPress={filterNearest}>
+              {/* <TouchableOpacity style={{padding: 10, backgroundColor: "grey", borderRadius: 20, width: 150}} onPress={filterNearest}>
                 <Text style={{textAlign: "center", color: "white", fontWeight: "bold"}}>{`Filter within 5KM  `}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={{padding: 10, backgroundColor: "grey", borderRadius: 20, width: 80}} onPress={resetFilter}>
                 <Text style={{textAlign: "center", color: "white", fontWeight: "bold"}}>{`Reset (${data.length})`}</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
           </View>
 
           { 

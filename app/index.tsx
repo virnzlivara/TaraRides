@@ -81,16 +81,13 @@ export default function Page() {
    
   }, [currentLocation])
 
-  const initializeDataWithDistance = () => { 
-    
+  const initializeDataWithDistance = () => {  
     let newData : IRide[] = []; 
     if (RideRequest.length >= 0 && driversInfoSelector.currentLocation) { 
-      RideRequest.map((userInfo)=> {
+      RideRequest.map(async (userInfo)=> {
         const distance =  getDistanceMeter( {latitude: userInfo.pickupLocation.latitude, longitude: userInfo.pickupLocation.longitude }) 
-        newData.push({...userInfo, distance: distance})
-       
-        
-      })   
+        newData.push({...userInfo, distance: distance}) 
+      }) 
       dispatch(addRides({rideList: newData}))
     }  
   }
